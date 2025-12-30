@@ -1,0 +1,32 @@
+# Workspace build artifacts
+/target
+backend/target
+
+# Node/Next.js
+/frontend/node_modules
+/frontend/.next
+/frontend/.turbo
+
+# Env files (keep .env.example)
+/.env
+/.env.local
+/.env.development
+/.env.production
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.development
+/frontend/.env.production
+backend/.env
+backend/.env.local
+backend/.env.development
+backend/.env.production
+
+# Local data
+/data/*.db
+/data/*.db-*
+/data/*.db-shm
+/data/*.db-wal
+
+# OS/editor
+.DS_Store
+*.log
