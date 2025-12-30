@@ -18,50 +18,40 @@ type Props = {
 
 export function MessageList({ messages }: Props) {
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col space-y-8">
       {messages.map((msg) => (
-        <article
-          key={msg.id}
-          className={clsx(
-            "rounded-2xl border p-4 shadow-sm backdrop-blur",
-            msg.role === "assistant"
-              ? "border-emerald-400/20 bg-emerald-400/5"
-              : "border-white/10 bg-white/5"
-          )}
-        >
-          <div className="mb-1 flex items-center gap-2 text-xs uppercase tracking-[0.15em] text-slate-300">
-            <span
-              className={clsx(
-                "h-2 w-2 rounded-full",
-                msg.role === "assistant" ? "bg-emerald-400" : "bg-sky-400"
-              )}
-            />
-            {msg.role}
+        <article key={msg.id} className="flex gap-4">
+          <div className={clsx(
+              "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold",
+              msg.role === "assistant" ? "bg-white text-black" : "bg-white/10 text-white"
+          )}>
+            {msg.role === "assistant" ? "AI" : "U"}
           </div>
-          <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-100">
-            {msg.content}
-          </p>
-          {msg.role === "assistant" && (msg.tokens_output || msg.tokens_input || msg.cost) && (
-            <div className="mt-2 text-xs text-slate-300">
-              {typeof msg.tokens_input === "number" && (
-                <span className="mr-3">in: {msg.tokens_input}</span>
-              )}
-              {typeof msg.tokens_output === "number" && (
-                <span className="mr-3">out: {msg.tokens_output}</span>
-              )}
-              {typeof msg.cost === "number" && (
-                <span>cost: ${msg.cost.toFixed(6)}</span>
-              )}
-              {msg.routing && (
-                <span className="ml-3 inline-flex items-center gap-1 rounded-full bg-black/30 px-2 py-1 text-[11px] font-semibold text-emerald-200">
-                  {msg.routing.selected_model}
-                  {msg.routing.used_fallback && (
-                    <span className="text-amber-300">fallback</span>
-                  )}
-                </span>
-              )}
-            </div>
-          )}
+          
+          <div className="flex-1 space-y-1 overflow-hidden">
+             <div className="flex items-center gap-2">
+                 <span className="text-sm font-semibold text-white">
+                     {msg.role === "assistant" ? "Assistant" : "You"}
+                 </span>
+             </div>
+             <div className="prose prose-invert max-w-none text-sm leading-relaxed text-gray-300">
+                <p className="whitespace-pre-wrap">{msg.content}</p>
+             </div>
+             
+             {msg.role === "assistant" && (msg.tokens_output || msg.routing) && (
+                <div className="pt-2 flex items-center gap-3 text-xs text-gray-600">
+                    {msg.routing?.selected_model && (
+                        <span>{msg.routing.selected_model}</span>
+                    )}
+                    {(msg.tokens_input || msg.tokens_output) && (
+                        <span>{msg.tokens_input ?? 0} in / {msg.tokens_output ?? 0} out</span>
+                    )}
+                    {msg.cost !== undefined && (
+                        <span>${msg.cost.toFixed(5)}</span>
+                    )}
+                </div>
+             )}
+          </div>
         </article>
       ))}
     </div>

@@ -203,6 +203,10 @@ pub async fn chat_stream(
         .map(|m| m.content.clone())
         .unwrap_or_default();
     tokio::spawn(async move {
+        // Send initial comment to establish stream
+        if tx.send(Ok(Event::default().comment("start"))).is_err() {
+            return;
+        }
         let llm_res = route_with_fallbacks(&llm, &state.access, &body, &plan_clone).await;
         match llm_res {
             Ok(res) => {
@@ -264,12 +268,14 @@ pub async fn chat_stream(
                 let _ = tx.send(Ok(Event::default().event("done").data(meta.to_string())));
             }
             Err(e) => {
-                let _ = tx.send(Err(AppError::from(e)));
+                let err_msg = e.to_string();
+                let _ = tx.send(Ok(Event::default().data(format!("Error: {}", err_msg))));
             }
         }
     });
 
-    Ok(Sse::new(UnboundedReceiverStream::new(rx)))
+    Ok(Sse::new(UnboundedReceiverStream::new(rx))
+        .keep_alive(axum::response::sse::KeepAlive::new()))
 }
 
 fn provider_from_str(provider: &str) -> Result<Provider, AppError> {

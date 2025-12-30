@@ -18,24 +18,27 @@ export function MessageInput({ onSend, disabled, placeholder }: Props) {
     setValue("");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(e as any);
+    }
+  };
+
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="flex items-end gap-3 rounded-2xl border border-white/10 bg-white/5 p-3 shadow-inner"
-    >
+    <form onSubmit={handleSubmit} className="w-full">
       <textarea
-        className="min-h-[64px] flex-1 resize-none rounded-xl border border-white/10 bg-black/40 px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-white/30 focus:outline-none"
+        className="w-full resize-none bg-transparent px-2 py-2 text-sm text-white placeholder-gray-500 focus:outline-none"
         value={value}
         placeholder={placeholder ?? "Type your message..."}
         onChange={(e) => setValue(e.target.value)}
+        onKeyDown={handleKeyDown}
+        rows={1}
+        style={{ minHeight: "44px" }}
       />
-      <button
-        type="submit"
-        disabled={disabled || !value.trim()}
-        className="rounded-xl bg-emerald-400 px-4 py-2 text-sm font-semibold text-slate-900 shadow-lg shadow-emerald-500/20 transition hover:bg-emerald-300 disabled:cursor-not-allowed disabled:opacity-50"
-      >
-        {disabled ? "Sending..." : "Send"}
-      </button>
+      <div className="sr-only">
+        <button type="submit" disabled={disabled || !value.trim()}>Send</button>
+      </div>
     </form>
   );
 }

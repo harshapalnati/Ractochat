@@ -62,6 +62,18 @@ impl AccessControl {
             .map(|a| a.allowed_models.clone())
             .unwrap_or_else(|| self.catalog.all_aliases());
 
+        // HACK: Allow 'gpt-4.1' alias for frontend compatibility
+        let mut allowlist = allowlist;
+        if allowlist.iter().any(|m| m == "gpt-4-turbo-preview") && !allowlist.contains(&"gpt-4.1".to_string()) {
+            allowlist.push("gpt-4.1".to_string());
+        }
+        if allowlist.iter().any(|m| m == "claude-3-5-sonnet-20240620") && !allowlist.contains(&"claude-3.5-sonnet".to_string()) {
+             allowlist.push("claude-3.5-sonnet".to_string());
+        }
+        if allowlist.iter().any(|m| m == "claude-3-haiku-20240307") && !allowlist.contains(&"claude-3-haiku".to_string()) {
+             allowlist.push("claude-3-haiku".to_string());
+        }
+
         let picked = self.catalog.resolve(requested, &allowlist).ok_or_else(|| {
             AppError::BadRequest(format!(
                 "model '{}' not allowed or not available",
@@ -238,16 +250,16 @@ impl AccessControl {
     }
 }
 
-pub fn seeded_accounts() -> Vec<AccountAccess> {
+    pub fn seeded_accounts() -> Vec<AccountAccess> {
     vec![
         AccountAccess {
             id: "demo-user".into(),
             email: "demo@local".into(),
             display_name: "Demo User".into(),
             allowed_models: vec![
-                "gpt-4.1".into(),
+                "gpt-4-turbo-preview".into(),
                 "gpt-4o-mini".into(),
-                "claude-3.5-sonnet".into(),
+                "claude-3-5-sonnet-20240620".into(),
             ],
             status: AccountStatus::Active,
             default_model: Some("gpt-latest".into()),
@@ -257,11 +269,11 @@ pub fn seeded_accounts() -> Vec<AccountAccess> {
             tokens_per_day: Some(500_000),
             model_price_caps: vec![
                 ModelPriceCap {
-                    model: "gpt-4.1".into(),
+                    model: "gpt-4-turbo-preview".into(),
                     max_cents: 50,
                 },
                 ModelPriceCap {
-                    model: "claude-3.5-sonnet".into(),
+                    model: "claude-3-5-sonnet-20240620".into(),
                     max_cents: 30,
                 },
             ],
@@ -271,9 +283,9 @@ pub fn seeded_accounts() -> Vec<AccountAccess> {
             email: "ops@internal".into(),
             display_name: "Ops Team".into(),
             allowed_models: vec![
-                "gpt-4.1".into(),
-                "claude-3.5-sonnet".into(),
-                "claude-3-haiku".into(),
+                "gpt-4-turbo-preview".into(),
+                "claude-3-5-sonnet-20240620".into(),
+                "claude-3-haiku-20240307".into(),
             ],
             status: AccountStatus::Active,
             default_model: Some("ops-fast".into()),

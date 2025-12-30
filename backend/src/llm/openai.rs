@@ -103,7 +103,8 @@ struct OpenAiChoice {
 
 #[derive(Debug, Deserialize)]
 struct OpenAiChatMessage {
-    _role: Role,
+    #[serde(rename = "role")]
+    _role: String,
     content: Option<String>,
 }
 

@@ -24,7 +24,9 @@ impl Config {
             env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite://./data/app.db".into());
         let openai_api_key = env::var("OPENAI_API_KEY").ok();
         let anthropic_api_key = env::var("ANTHROPIC_API_KEY").ok();
-        let allowed_origins = env::var("ALLOWED_ORIGINS").ok();
+        let allowed_origins = env::var("ALLOWED_ORIGINS")
+            .ok()
+            .or_else(|| Some("http://localhost:3000".to_string()));
         let jwt_secret = env::var("JWT_SECRET").unwrap_or_else(|_| "dev-secret-change-me".into());
 
         Ok(Self {
