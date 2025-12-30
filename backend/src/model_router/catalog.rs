@@ -86,27 +86,29 @@ impl Catalog {
     pub fn seed() -> Self {
         let mut models: HashMap<String, CatalogEntry> = HashMap::new();
         models.insert(
-            "gpt-4.1".into(),
-            CatalogEntry::new("openai", "gpt-4.1", 0.5, 4.0),
-        );
-        models.insert(
-            "gpt-4o-mini".into(),
-            CatalogEntry::new("openai", "gpt-4o-mini", 0.05, 2.0),
+            "gpt-4-turbo-preview".into(),
+            CatalogEntry::new("openai", "gpt-4-turbo-preview", 0.5, 4.0),
         );
         models.insert(
             "claude-3.5-sonnet".into(),
-            CatalogEntry::new("anthropic", "claude-3.5-sonnet", 0.3, 3.5),
+            CatalogEntry::new("anthropic", "claude-3-5-sonnet-20240620", 0.3, 3.5),
         );
         models.insert(
             "claude-3-haiku".into(),
-            CatalogEntry::new("anthropic", "claude-3-haiku", 0.08, 3.0),
+            CatalogEntry::new("anthropic", "claude-3-haiku-20240307", 0.08, 3.0),
         );
 
         let mut aliases = HashMap::new();
         aliases.insert(
+            "gpt-4.1".into(),
+            AliasRule {
+                targets: vec![AliasTarget::new("gpt-4-turbo-preview", 100)],
+            },
+        );
+        aliases.insert(
             "gpt-latest".into(),
             AliasRule {
-                targets: vec![AliasTarget::new("gpt-4.1", 100)],
+                targets: vec![AliasTarget::new("gpt-4-turbo-preview", 100)],
             },
         );
         aliases.insert(
@@ -118,18 +120,18 @@ impl Catalog {
         aliases.insert(
             "ops-fast".into(),
             AliasRule {
-                targets: vec![AliasTarget::new("claude-3-haiku", 100)],
+                targets: vec![AliasTarget::new("claude-3-haiku-20240307", 100)],
             },
         );
 
         let mut fallbacks = HashMap::new();
         fallbacks.insert(
-            "gpt-4.1".into(),
-            vec!["gpt-4o-mini".into(), "claude-3.5-sonnet".into()],
+            "gpt-4-turbo-preview".into(),
+            vec!["gpt-4o-mini".into(), "claude-3-5-sonnet-20240620".into()],
         );
         fallbacks.insert(
-            "claude-3.5-sonnet".into(),
-            vec!["claude-3-haiku".into(), "gpt-4o-mini".into()],
+            "claude-3-5-sonnet-20240620".into(),
+            vec!["claude-3-haiku-20240307".into(), "gpt-4o-mini".into()],
         );
 
         let mut health = HashMap::new();
